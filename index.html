@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新年紅包領取</title>
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei', sans-serif;
+            background: linear-gradient(135deg, #f9f4e6 0%, #f5e9d3 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .redpacket-btn {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(to right, #d32f2f, #f44336);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 20px 0;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .redpacket-preview {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .redpacket-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 400px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="color:#d32f2f;">🎁 新年紅包</h1>
+        <p>來自 Anson 的祝福！</p>
+        
+        <button class="redpacket-btn" onclick="showRedPacket()">
+            🎉 點我領取紅包
+        </button>
+        
+        <p style="color:#666; margin-top:20px;">祝福您新年快樂，考試順利！</p>
+    </div>
+    
+    <div id="redpacketModal" class="redpacket-preview">
+        <div class="redpacket-content">
+            <h2 style="color:#d32f2f;">新年和考試祝福紅包</h2>
+            <div style="margin:20px 0;">
+                <span style="background:#ffcdd2; color:#d32f2f; padding:5px 15px; border-radius:20px;">現金紅包</span>
+            </div>
+            <div style="font-size:3rem; color:#f44336; font-weight:bold; margin:20px 0;">0.00 元</div>
+            <p style="color:#666; margin:15px 0;">點擊領取您的專屬紅包，祝福您新年快樂！From Anson！</p>
+            <div style="background:#f5f5f5; padding:10px; border-radius:8px; margin:15px 0;">
+                <div style="font-size:0.9rem; color:#888;">領取代碼</div>
+                <div style="font-family:monospace; font-size:1.2rem; letter-spacing:2px;">RP8K6P87ABTJ</div>
+            </div>
+            <div style="color:#888; font-size:0.9rem;">有效期限：領取後1天內有效</div>
+            <button onclick="closeRedPacket()" style="margin-top:20px; padding:10px 30px; background:#4CAF50; color:white; border:none; border-radius:8px; cursor:pointer;">
+                領取成功！點此關閉
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        function showRedPacket() {
+            document.getElementById('redpacketModal').style.display = 'flex';
+        }
+        
+        function closeRedPacket() {
+            document.getElementById('redpacketModal').style.display = 'none';
+            alert('紅包已領取成功！祝福您新年快樂！');
+        }
+    </script>
+</body>
+</html>
