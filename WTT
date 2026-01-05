@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anson的紅包分享頁面</title>
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei', sans-serif;
+            background: linear-gradient(135deg, #f9f4e6 0%, #f5e9d3 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: linear-gradient(to right, #d32f2f, #f44336);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: -40px -40px 40px -40px;
+        }
+        
+        .redpacket-card {
+            background: #fff9f9;
+            border: 2px dashed #f44336;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        
+        .claim-btn {
+            display: inline-block;
+            padding: 18px 50px;
+            background: linear-gradient(to right, #d32f2f, #f44336);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 20px 0;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(244, 67, 54, 0.3);
+        }
+        
+        .claim-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(244, 67, 54, 0.4);
+        }
+        
+        .share-section {
+            background: #e8f5e9;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 40px;
+            text-align: center;
+        }
+        
+        .share-btn {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            background: #2196F3;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎉 新年紅包分享中心 🎉</h1>
+            <p>來自 Anson 的專屬祝福</p>
+        </div>
+        
+        <h2>📖 活動說明</h2>
+        <p>這是一個新年祝福紅包分享頁面，包含了讀書會成員的紅包連結。</p>
+        
+        <div class="redpacket-card">
+            <h3>🎁 新年和考試祝福紅包</h3>
+            <p>點擊領取您的專屬紅包，祝福您新年快樂！From Anson！</p>
+            
+            <div style="margin: 25px 0;">
+                <button class="claim-btn" onclick="claimRedPacket()">
+                    立即領取紅包
+                </button>
+            </div>
+            
+            <div style="background: white; padding: 15px; border-radius: 10px; margin: 20px 0;">
+                <p><strong>🎫 紅包資訊：</strong></p>
+                <p>類型：祝福紅包</p>
+                <p>代碼：RP8K6P87ABTJ</p>
+                <p>有效期：1天</p>
+            </div>
+        </div>
+        
+        <h2>📚 讀書會資源</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 30px 0;">
+            <div style="background: #f0f7ff; padding: 20px; border-radius: 10px;">
+                <h4>📖 好書推薦</h4>
+                <p>讀書會分享的優質書籍</p>
+                <a href="#books" style="color: #1971c2;">查看清單 →</a>
+            </div>
+            <div style="background: #fff0f6; padding: 20px; border-radius: 10px;">
+                <h4>🎯 學習資源</h4>
+                <p>考試準備與學習技巧</p>
+                <a href="#resources" style="color: #c2255c;">前往查看 →</a>
+            </div>
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                <h4>👥 成員交流</h4>
+                <p>讀書會成員互動區</p>
+                <a href="#discussion" style="color: #495057;">參與討論 →</a>
+            </div>
+        </div>
+        
+        <div class="share-section">
+            <h3>🔗 分享此頁面</h3>
+            <p>將此頁面分享給其他同學：</p>
+            <p><strong>頁面網址：</strong><br>
+            <span id="page-url">載入中...</span></p>
+            
+            <div>
+                <button onclick="copyPageUrl()" class="share-btn">📋 複製連結</button>
+                <button onclick="shareToWhatsApp()" class="share-btn">💬 分享到 WhatsApp</button>
+                <button onclick="shareToLine()" class="share-btn">💚 分享到 Line</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 紅包領取功能
+        function claimRedPacket() {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                z-index: 9999;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: white; padding: 40px; border-radius: 20px; text-align: center; max-width: 400px;">
+                    <h2 style="color:#d32f2f;">🎊 紅包領取成功！</h2>
+                    <div style="font-size: 3rem; color: #f44336; margin: 20px 0;">🎁</div>
+                    <p>您已成功領取 Anson 的新年祝福紅包！</p>
+                    <p><strong>領取代碼：</strong> RP8K6P87ABTJ</p>
+                    <p><strong>有效期限：</strong> 1天</p>
+                    <p style="margin: 25px 0; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                        📚 祝福您新年快樂，考試順利！<br>
+                        學業進步，心想事成！
+                    </p>
+                    <button onclick="this.parentElement.parentElement.remove()" 
+                            style="padding: 12px 40px; background: #4CAF50; color: white; border: none; border-radius: 8px; font-size: 1.1rem; cursor: pointer;">
+                        關閉
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+        
+        // 顯示當前頁面網址
+        document.getElementById('page-url').textContent = window.location.href;
+        
+        // 複製頁面網址
+        function copyPageUrl() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert('已複製頁面連結到剪貼簿！');
+            });
+        }
+        
+        // 分享到 WhatsApp
+        function shareToWhatsApp() {
+            const text = `🎉 新年紅包分享 🎉\n\n${window.location.href}\n\n來自 Anson 的新年祝福！`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+        }
+        
+        // 分享到 Line
+        function shareToLine() {
+            const text = `新年紅包分享 - 來自 Anson`;
+            window.open(`https://line.me/R/share?text=${encodeURIComponent(text + '\n' + window.location.href)}`, '_blank');
+        }
+        
+        // 頁面載入完成後顯示歡迎訊息
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                console.log('🎉 歡迎來到 Anson 的紅包分享頁面！');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
