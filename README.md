@@ -1,2 +1,2 @@
-# s250051-pixel.github.io
+# s250051-pixel.github.io.
 W
