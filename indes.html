@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>整蛊红包链接生成器</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-red: #d32f2f;
+            --light-red: #ffcdd2;
+            --gold: #ffd700;
+            --dark-bg: #2c3e50;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft JhengHei', 'Segoe UI', sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #f9f4e6 0%, #f5e9d3 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            border: 1px solid #e6d4b9;
+        }
+        header {
+            background: linear-gradient(to right, var(--primary-red), #f44336);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            position: relative;
+        }
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .red-envelope-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 3.5rem;
+            opacity: 0.7;
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+        }
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 25px;
+        }
+        .form-section, .preview-section {
+            flex: 1;
+            min-width: 300px;
+            padding: 15px;
+        }
+        .section-title {
+            color: var(--primary-red);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--light-red);
+            display: flex;
+            align-items: center;
+        }
+        .section-title i {
+            margin-right: 10px;
+        }
+        .form-group {
+            margin-bottom: 22px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-red);
+            box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+        }
+        .amount-input {
+            position: relative;
+        }
+        .amount-input span {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: bold;
+            color: var(--primary-red);
+        }
+        .radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .radio-option {
+            flex: 1;
+            min-width: 140px;
+        }
+        .radio-option input {
+            display: none;
+        }
+        .radio-option label {
+            display: block;
+            padding: 18px;
+            background-color: #f5f5f5;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            font-weight: 600;
+        }
+        .radio-option input:checked + label {
+            background-color: #ffebee;
+            border-color: var(--primary-red);
+            color: var(--primary-red);
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(244, 67, 54, 0.2);
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .checkbox-group input {
+            width: 20px;
+            height: 20px;
+        }
+        .checkbox-group label {
+            margin-bottom: 0;
+            font-weight: normal;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(to right, var(--primary-red), #f44336);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 25px;
+            letter-spacing: 1px;
+        }
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(244, 67, 54, 0.3);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        .link-display {
+            margin-top: 25px;
+            background-color: #f9f9f9;
+            border-radius: 12px;
+            padding: 25px;
+            border-left: 6px solid var(--primary-red);
+            display: none;
+        }
+        .link-display.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .link-display h3 {
+            margin-bottom: 18px;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+        #generated-link {
+            background-color: white;
+            padding: 18px;
+            border-radius: 10px;
+            border: 2px dashed #ccc;
+            word-break: break-all;
+            font-family: monospace;
+            margin-bottom: 20px;
+            color: var(--primary-red);
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .action-btn {
+            flex: 1;
+            min-width: 140px;
+            padding: 15px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 1rem;
+        }
+        .copy-btn {
+            background: linear-gradient(to right, #4CAF50, #2E7D32);
+            color: white;
+        }
+        .test-btn {
+            background: linear-gradient(to right, #2196F3, #0D47A1);
+            color: white;
+        }
+        .action-btn:hover {
+            transform: translateY(-3px);
+            opacity: 0.95;
+        }
+        .preview-box {
+            background: linear-gradient(145deg, #fff9f9 0%, #ffeaea 100%);
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            margin-top: 20px;
+            text-align: center;
+            border: 3px solid #ffcdd2;
+            min-height: 450px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .preview-title {
+            font-size: 2.2rem;
+            color: var(--primary-red);
+            margin-bottom: 20px;
+            word-break: break-word;
+        }
+        .preview-amount {
+            font-size: 4.5rem;
+            color: #f44336;
+            font-weight: bold;
+            margin: 25px 0;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.15);
+        }
+        .negative-amount {
+            color: #2E7D32 !important;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .preview-type {
+            display: inline-block;
+            background-color: var(--light-red);
+            color: var(--primary-red);
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+        }
+        .preview-desc {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.7;
+            font-size: 1.05rem;
+            padding: 0 10px;
+        }
+        .preview-code {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(to right, #f5f5f5, #e8e8e8);
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1.4rem;
+            letter-spacing: 3px;
+            color: var(--primary-red);
+            margin: 20px 0;
+            border: 2px solid #ddd;
+        }
+        .preview-expiry {
+            color: #888;
+            font-size: 0.95rem;
+            margin-top: 25px;
+            font-style: italic;
+        }
+        .info-box {
+            background-color: #e8f5e9;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 35px;
+            border-left: 6px solid #4CAF50;
+        }
+        .info-box h3 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        .info-box ul {
+            padding-left: 25px;
+        }
+        .info-box li {
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #777;
+            border-top: 1px solid #eee;
+            margin-top: 30px;
+            font-size: 0.95rem;
+            background-color: #f9f9f9;
+        }
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+                padding: 15px;
+            }
+            .form-section, .preview-section {
+                padding: 10px;
+            }
+            header h1 {
+                font-size: 2rem;
+            }
+            .preview-amount {
+                font-size: 3.5rem;
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-gift"></i> 整蛊红包链接生成器</h1>
+            <p>自定义红包金额（支持负数或极小金额），生成可分享的领取链接，适合恶作剧或特殊用途</p>
+            <div class="red-envelope-icon">
+                <i class="fas fa-envelope-open-text"></i>
+            </div>
+        </header>
+        
+        <div class="content">
+            <div class="form-section">
+                <h2 class="section-title"><i class="fas fa-sliders-h"></i> 设置红包参数</h2>
+                
+                <div class="form-group">
+                    <label for="redpacket-type">红包类型</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="type-cash" name="redpacket-type" value="cash" checked>
+                            <label for="type-cash"><i class="fas fa-money-bill-wave"></i> 现金红包</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="type-coupon" name="redpacket-type" value="coupon">
+                            <label for="type-coupon"><i class="fas fa-ticket-alt"></i> 优惠券</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="type-joke" name="redpacket-type" value="joke">
+                            <label for="type-joke"><i class="fas fa-surprise"></i> 整蛊红包</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="amount">红包金额 / 面额</label>
+                    <div class="amount-input">
+                        <input type="number" id="amount" step="0.01" value="-100" placeholder="输入金额，支持负数">
+                        <span>元</span>
+                    </div>
+                    <div style="font-size: 0.9rem; color: #666; margin-top: 8px;">
+                        <i class="fas fa-info-circle"></i> 可设置为负数（如 -100）或极小值（如 0.01），用于特殊效果
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="redpacket-name">红包名称</label>
+                    <input type="text" id="redpacket-name" placeholder="例如：友情考验红包、惊喜优惠券" value="友情考验红包">
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">红包描述 / 祝福语</label>
+                    <textarea id="description" rows="3" placeholder="输入红包描述或祝福语">点击领取你的专属红包，友情大考验！看看你是得到惊喜还是惊吓！</textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="expiry-days">有效天数</label>
+                    <select id="expiry-days">
+                        <option value="0.04">1小时 (仅限当前)</option>
+                        <option value="1">1天</option>
+                        <option value="3">3天</option>
+                        <option value="7" selected>7天</option>
+                        <option value="30">30天</option>
+                        <option value="36500">永久有效</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>特殊效果</label>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="show-confetti">
+                        <label for="show-confetti">领取时显示庆祝特效</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="play-sound" checked>
+                        <label for="play-sound">领取时播放音效</label>
+                    </div>
+                </div>
+                
+                <button id="generate-btn" class="btn">
+                    <i class="fas fa-link"></i> 生成红包领取链接
+                </button>
+                
+                <div class="link-display" id="link-section">
+                    <h3><i class="fas fa-share-alt"></i> 生成的红包链接</h3>
+                    <div id="generated-link">链接将在此显示</div>
+                    <div class="action-buttons">
+                        <button class="action-btn copy-btn" id="copy-btn">
+                            <i class="far fa-copy"></i> 复制链接
+                        </button>
+                        <button class="action-btn test-btn" id="test-btn">
+                            <i class="fas fa-external-link-alt"></i> 测试链接
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="preview-section">
+                <h2 class="section-title"><i class="fas fa-eye"></i> 红包预览效果</h2>
+                <div class="preview-box">
+                    <div class="preview-title" id="preview-title">友情考验红包</div>
+                    <div class="preview-type" id="preview-type">整蛊红包</div>
+                    <div class="preview-amount negative-amount" id="preview-amount">-100.00 元</div>
+                    <div class="preview-desc" id="preview-desc">点击领取你的专属红包，友情大考验！看看你是得到惊喜还是惊吓！</div>
+                    <div>领取代码：</div>
+                    <div class="preview-code" id="preview-code">RP-JOKE-2023</div>
+                    <div class="preview-expiry" id="preview-expiry">有效期限：领取后7天內有效</div>
+                </div>
+                
+                <div class="info-box">
+                    <h3><i class="fas fa-lightbulb"></i> 使用说明</h3>
+                    <ul>
+                        <li><strong>负金额红包</strong>：设置为负数（如 -100）会产生“倒欠款”效果，适合朋友间恶作剧。</li>
+                        <li><strong>极小金额</strong>：设置为 0.01、0.1 等极小值，可用于特殊活动或趣味互动。</li>
+                        <li><strong>链接分享</strong>：生成的链接包含所有红包参数，可直接分享到微信、QQ等平台。</li>
+                        <li><strong>完全本地</strong>：所有操作均在浏览器中完成，无需网络连接，保护隐私。</li>
+                        <li><strong>领取测试</strong>：点击"测试链接"可在当前页面模拟领取效果。</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>整蛊红包链接生成器 &copy; 2023 | 本工具仅供娱乐，生成的红包无实际金融价值 | 数据完全保存在本地浏览器</p>
+        </footer>
+    </div>
+    
+    <!-- 添加一个隐藏的音频元素用于播放音效 -->
+    <audio id="sound-effect" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-notification-253.mp3" type="audio/mpeg">
+    </audio>
+    
+    <script>
+        // 获取DOM元素
+        const amountInput = document.getElementById('amount');
+        const redpacketNameInput = document.getElementById('redpacket-name');
+        const descriptionInput = document.getElementById('description');
+        const expiryDaysSelect = document.getElementById('expiry-days');
+        const generateBtn = document.getElementById('generate-btn');
+        const linkSection = document.getElementById('link-section');
+        const generatedLink = document.getElementById('generated-link');
+        const copyBtn = document.getElementById('copy-btn');
+        const testBtn = document.getElementById('test-btn');
+        const redpacketTypeRadios = document.querySelectorAll('input[name="redpacket-type"]');
+        const showConfettiCheckbox = document.getElementById('show-confetti');
+        const playSoundCheckbox = document.getElementById('play-sound');
+        const soundEffect = document.getElementById('sound-effect');
+        
+        // 预览元素
+        const previewTitle = document.getElementById('preview-title');
+        const previewType = document.getElementById('preview-type');
+        const previewAmount = document.getElementById('preview-amount');
+        const previewDesc = document.getElementById('preview-desc');
+        const previewCode = document.getElementById('preview-code');
+        const previewExpiry = document.getElementById('preview-expiry');
+        
+        // 初始化预览
+        updatePreview();
+        
+        // 为输入元素添加事件监听器，实时更新预览
+        amountInput.addEventListener('input', updatePreview);
+        redpacketNameInput.addEventListener('input', updatePreview);
+        descriptionInput.addEventListener('input', updatePreview);
+        expiryDaysSelect.addEventListener('change', updatePreview);
+        redpacketTypeRadios.forEach(radio => {
+            radio.addEventListener('change', updatePreview);
+        });
+        
+        // 更新预览
+        function updatePreview() {
+            const amount = parseFloat(amountInput.value).toFixed(2);
+            const name = redpacketNameInput.value || "未命名红包";
+            const desc = descriptionInput.value || "无描述";
+            const expiryDays = expiryDaysSelect.value;
+            
+            // 获取选中的红包类型
+            let selectedType = "cash";
+            let typeText = "现金红包";
+            redpacketTypeRadios.forEach(radio => {
+                if (radio.checked) {
+                    selectedType = radio.value;
+                    if (selectedType === "cash") typeText = "现金红包";
+                    else if (selectedType === "coupon") typeText = "优惠券";
+                    else if (selectedType === "joke") typeText = "整蛊红包";
+                }
+            });
+            
+            // 生成随机领取代码
+            const code = generateRedpacketCode();
+            
+            // 更新预览内容
+            previewTitle.textContent = name;
+            previewType.textContent = typeText;
+            previewAmount.textContent = amount + " 元";
+            previewDesc.textContent = desc;
+            previewCode.textContent = code;
+            
+            // 根据金额正负设置样式
+            if (parseFloat(amount) < 0) {
+                previewAmount.classList.add("negative-amount");
+            } else {
+                previewAmount.classList.remove("negative-amount");
+            }
+            
+            let expiryText = "永久有效";
+            if (expiryDays !== "36500") {
+                if (expiryDays === "0.04") {
+                    expiryText = "仅限1小时内有效";
+                } else {
+                    expiryText = `领取后${expiryDays}天內有效`;
+                }
+            }
+            previewExpiry.textContent = `有效期限：${expiryText}`;
+        }
+        
+        // 生成红包代碼
+        function generateRedpacketCode() {
+            const prefix = "RP";
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let code = '';
+            for (let i = 0; i < 8; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return `${prefix}-${code.substring(0,4)}-${code.substring(4)}`;
+        }
+        
+        // 生成红包链接
+        generateBtn.addEventListener('click', function() {
+            const amount = parseFloat(amountInput.value).toFixed(2);
+            const name = encodeURIComponent(redpacketNameInput.value || "未命名红包");
+            const desc = encodeURIComponent(descriptionInput.value || "无描述");
+            const expiryDays = expiryDaysSelect.value;
+            
+            // 获取选中的红包类型
+            let selectedType = "cash";
+            redpacketTypeRadios.forEach(radio => {
+                if (radio.checked) selectedType = radio.value;
+            });
+            
+            // 获取特殊效果设置
+            const showConfetti = showConfettiCheckbox.checked;
+            const playSound = playSoundCheckbox.checked;
+            
+            // 生成随机代碼
+            const code = generateRedpacketCode();
+            
+            // 创建模拟链接 - 使用javascript:协议调用展示函数
+            // 注意：在实际分享时，可以将此链接替换为指向实际托管页面的URL
+            const link = `javascript:showRedPacket("${selectedType}", "${amount}", "${name}", "${desc}", "${expiryDays}", "${code}", ${showConfetti}, ${playSound})`;
+            
+            // 显示生成的链接
+            generatedLink.textContent = link;
+            linkSection.classList.add('show');
+            
+            // 滚动到連結区域
+            linkSection.scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        // 复制链接功能
+        copyBtn.addEventListener('click', function() {
+            const linkText = generatedLink.textContent;
+            
+            // 使用Clipboard API复制文字
+            navigator.clipboard.writeText(linkText).then(function() {
+                // 显示成功訊息
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fas fa-check"></i> 已复制';
+                copyBtn.style.background = 'linear-gradient(to right, #2E7D32, #1B5E20)';
+                
+                setTimeout(function() {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.style.background = '';
+                }, 2000);
+            }).catch(function(err) {
+                console.error('复制失败: ', err);
+                // 降级方案
+                const textArea = document.createElement("textarea");
+                textArea.value = linkText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textArea);
+                
+                alert('链接已复制到剪贴板！');
+            });
+        });
+        
+        // 测试链接功能 - 在当前页面显示红包
+        testBtn.addEventListener('click', function() {
+            const link = generatedLink.textContent;
+            if (link && link !== '链接将在此显示') {
+                // 从链接中提取参数并调用显示函数
+                const params = extractParamsFromLink(link);
+                showRedPacket(
+                    params.type, 
+                    params.amount, 
+                    params.name, 
+                    params.desc, 
+                    params.expiry, 
+                    params.code,
+                    params.showConfetti,
+                    params.playSound
+                );
+            } else {
+                // 如果没有生成链接，使用当前表单值测试
+                const amount = parseFloat(amountInput.value).toFixed(2);
+                const name = encodeURIComponent(redpacketNameInput.value || "未命名红包");
+                const desc = encodeURIComponent(descriptionInput.value || "无描述");
+                const expiryDays = expiryDaysSelect.value;
+                let selectedType = "cash";
+                redpacketTypeRadios.forEach(radio => {
+                    if (radio.checked) selectedType = radio.value;
+                });
+                const showConfetti = showConfettiCheckbox.checked;
+                const playSound = playSoundCheckbox.checked;
+                const code = generateRedpacketCode();
+                
+                showRedPacket(selectedType, amount, name, desc, expiryDays, code, showConfetti, playSound);
+            }
+        });
+        
+        // 从链接中提取参数
+        function extractParamsFromLink(link) {
+            try {
+                // 从javascript:链接中提取参数部分
+                const paramsStr = link.split('("')[1].split('")')[0];
+                const paramsArray = paramsStr.split('", "');
+                
+                return {
+                    type: paramsArray[0],
+                    amount: paramsArray[1],
+                    name: paramsArray[2],
+                    desc: paramsArray[3],
+                    expiry: paramsArray[4],
+                    code: paramsArray[5],
+                    showConfetti: paramsArray[6] === 'true',
+                    playSound: paramsArray[7] === 'true'
+                };
+            } catch (e) {
+                // 如果解析失败，返回默认值
+                return {
+                    type: "cash",
+                    amount: "0.00",
+                    name: "测试红包",
+                    desc: "这是一个测试红包",
+                    expiry: "7",
+                    code: "TEST-CODE",
+                    showConfetti: true,
+                    playSound: true
+                };
+            }
+        }
+        
+        // 显示红包的函数 - 这个函数会被生成的链接调用
+        window.showRedPacket = function(type, amount, name, desc, expiry, code, showConfetti, playSound) {
+            // 解码URL编码的参数
+            const decodedName = decodeURIComponent(name);
+            const decodedDesc = decodeURIComponent(desc);
+            
+            // 根据类型设置显示文本
+            let typeText = "现金红包";
+            if (type === "coupon") typeText = "优惠券";
+            else if (type === "joke") typeText = "整蛊红包";
+            
+            // 设置有效期限文本
+            let expiryText = "永久有效";
+            if (expiry !== "36500") {
+                if (expiry === "0.04") {
+                    expiryText = "仅限1小时内有效";
+                } else {
+                    expiryText = `领取后${expiry}天內有效`;
+                }
+            }
+            
+            // 播放音效（如果启用）
+            if (playSound && soundEffect) {
+                soundEffect.currentTime = 0;
+                soundEffect.play().catch(e => console.log("音效播放失败:", e));
+            }
+            
+            // 创建模态框
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.85);
+                z-index: 9999;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                animation: fadeIn 0.5s;
+            `;
+            
+            // 根据金额正负设置不同样式和文案
+            const isNegative = parseFloat(amount) < 0;
+            const amountColor = isNegative ? '#2E7D32' : '#f44336';
+            const amountText = isNegative ? `${amount} 元<br><small style="font-size: 1.2rem;">(你倒欠我${Math.abs(parseFloat(amount))}元)</small>` : `${amount} 元`;
+            const titleText = isNegative ? "😱 友情考验结果" : "🎉 红包领取成功";
+            const buttonText = isNegative ? "确认欠款并关闭" : "领取成功！点击关闭";
+            
+            modal.innerHTML = `
+                <div style="background: white; padding: 40px; border-radius: 20px; max-width: 500px; width: 90%; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); animation: popIn 0.6s;">
+                    <h2 style="color: ${amountColor}; margin-bottom: 10px; font-size: 2.2rem;">${titleText}</h2>
+                    <div style="margin: 20px 0;">
+                        <span style="background: ${isNegative ? '#c8e6c9' : '#ffcdd2'}; color: ${isNegative ? '#2E7D32' : '#d32f2f'}; padding: 8px 20px; border-radius: 20px; font-weight: bold;">${typeText}</span>
+                    </div>
+                    <div style="font-size: 4rem; color: ${amountColor}; font-weight: bold; margin: 25px 0; line-height: 1.2;">${amountText}</div>
+                    <h3 style="color: #333; margin-bottom: 15px;">${decodedName}</h3>
+                    <p style="color: #666; margin: 20px 0; line-height: 1.6; font-size: 1.1rem;">${decodedDesc}</p>
+                    <div style="background: #f5f5f5; padding: 15px; border-radius: 12px; margin: 20px 0;">
+                        <div style="font-size: 0.95rem; color: #888;">领取代码</div>
+                        <div style="font-family: 'Courier New', monospace; font-size: 1.5rem; letter-spacing: 3px; color: #d32f2f; margin-top: 5px;">${code}</div>
+                    </div>
+                    <div style="color: #888; font-size: 0.95rem; margin-bottom: 25px;">有效期限：${expiryText}</div>
+                    <button id="close-redpacket" style="padding: 15px 50px; background: ${isNegative ? '#2E7D32' : '#4CAF50'}; color: white; border: none; border-radius: 12px; font-size: 1.2rem; font-weight: bold; cursor: pointer; transition: all 0.3s;">
+                        ${buttonText}
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // 添加关闭功能
+            modal.querySelector('#close-redpacket').addEventListener('click', function() {
+                document.body.removeChild(modal);
+            });
+            
+            // 点击背景也可关闭
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    document.body.removeChild(modal);
+                }
+            });
+            
+            // 添加CSS动画
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                @keyframes popIn {
+                    0% { transform: scale(0.8); opacity: 0; }
+                    100% { transform: scale(1); opacity: 1; }
+                }
+            `;
+            document.head.appendChild(style);
+        };
+        
+        // 初始化时更新一次预览
+        updatePreview();
+    </script>
+</body>
+</html>
