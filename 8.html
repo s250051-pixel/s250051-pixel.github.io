@@ -1,1 +1,310 @@
 
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>考試大考驗紅包</title>
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei', sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #4a6491 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+        }
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: white;
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            border: 8px solid #f1c40f;
+            position: relative;
+            overflow: hidden;
+        }
+        .container::before {
+            content: "✏️ 📚 🧮";
+            font-size: 3rem;
+            position: absolute;
+            top: -20px;
+            left: 0;
+            right: 0;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+        .header {
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #e74c3c;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 0 #f1c40f;
+        }
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        .exam-notice {
+            background: #fff3cd;
+            border-left: 5px solid #f1c40f;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 25px 0;
+            text-align: left;
+            font-size: 1.05rem;
+        }
+        .redpacket-card {
+            background: linear-gradient(145deg, #fff9f9, #ffeaea);
+            border: 3px dashed #e74c3c;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+        .redpacket-card h3 {
+            color: #c0392b;
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+        .redpacket-card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .claim-btn {
+            display: inline-block;
+            padding: 20px 60px;
+            background: linear-gradient(to right, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.4s;
+            box-shadow: 0 10px 20px rgba(231, 76, 60, 0.3);
+            letter-spacing: 2px;
+        }
+        .claim-btn:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(231, 76, 60, 0.5);
+            background: linear-gradient(to right, #c0392b, #a93226);
+        }
+        .footer-note {
+            margin-top: 30px;
+            color: #95a5a6;
+            font-size: 0.95rem;
+            border-top: 1px solid #ecf0f1;
+            padding-top: 20px;
+        }
+        /* 彈窗樣式 */
+        .redpacket-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.5s;
+        }
+        .modal-content {
+            background: white;
+            padding: 50px 40px;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            animation: popIn 0.7s;
+            border: 12px solid #f1c40f;
+            box-shadow: 0 0 60px rgba(241, 196, 15, 0.7);
+            position: relative;
+            overflow: hidden;
+        }
+        .modal-content::before {
+            content: "❌⚠️😱";
+            font-size: 4rem;
+            position: absolute;
+            top: -30px;
+            left: 0;
+            right: 0;
+            opacity: 0.1;
+        }
+        .modal-title {
+            color: #2e7d32;
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        .modal-amount {
+            font-size: 5.5rem;
+            font-weight: bold;
+            color: #2e7d32;
+            margin: 25px 0;
+            text-shadow: 3px 3px 0 #c8e6c9;
+        }
+        .modal-type {
+            display: inline-block;
+            background: #c8e6c9;
+            color: #2e7d32;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            margin-bottom: 25px;
+            font-size: 1.3rem;
+        }
+        .modal-message {
+            color: #666;
+            line-height: 1.7;
+            margin: 20px 0 30px;
+            font-size: 1.15rem;
+            padding: 0 10px;
+        }
+        .modal-code {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 25px 0;
+            border: 2px solid #ddd;
+        }
+        .modal-code div:first-child {
+            color: #888;
+            font-size: 0.95rem;
+        }
+        .modal-code div:last-child {
+            font-family: 'Courier New', monospace;
+            font-size: 1.8rem;
+            letter-spacing: 3px;
+            color: #c0392b;
+            margin-top: 8px;
+        }
+        .close-btn {
+            padding: 16px 50px;
+            background: linear-gradient(to right, #2e7d32, #1b5e20);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 15px;
+        }
+        .close-btn:hover {
+            background: linear-gradient(to right, #1b5e20, #2e7d32);
+            transform: translateY(-3px);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 考試大考驗 📚</h1>
+            <p class="subtitle">考驗的不只是知識，還有友情！</p>
+        </div>
+
+        <div class="exam-notice">
+            <strong>🛎️ 挑戰說明：</strong> 點擊下方按鈕領取你的「考試結果紅包」。<br>
+            根據本次考試的表現，系統已自動計算出你的專屬獎勵（或懲罰？）。
+        </div>
+
+        <div class="redpacket-card">
+            <h3>🧧 考試結果紅包</h3>
+            <p>你收到一個來自「考試委員會」的神秘紅包。<br>裡面裝的是慰問金、補貼券，還是…一張欠條？</p>
+            <p><em>點開前，請做好心理準備！</em></p>
+
+            <button class="claim-btn" onclick="openRedPacket()">
+                立即領取紅包
+            </button>
+
+            <div style="margin-top: 25px; color: #7f8c8d; font-size: 0.9rem;">
+                ⏰ 有效期限：領取後永久有效（傷痛也是）
+            </div>
+        </div>
+
+        <div class="footer-note">
+            <strong>免責聲明：</strong> 本紅包純屬娛樂，旨在緩解考試壓力。<br>
+            無論結果如何，友誼第一，考試第二！祝各位學業進步！<br>
+            <span style="color: #e74c3c;">From: 你的損友 Anson</span>
+        </div>
+    </div>
+
+    <!-- 紅包彈窗 -->
+    <div id="redpacketModal" class="redpacket-modal">
+        <div class="modal-content">
+            <h2 class="modal-title">🎫 考試補償優惠券</h2>
+            <div class="modal-type">精神損失抵用券</div>
+
+            <div class="modal-amount">-100 元</div>
+
+            <p class="modal-message">
+                親愛的考生：<br>
+                經系統評定，您在本次考試中消耗了大量腦細胞，並承受了巨大心理壓力。<br>
+                特此發放此「負值優惠券」，可用於抵消下次考試的「過度自信」。
+            </p>
+
+            <div class="modal-code">
+                <div>領取代碼（請妥善保存）</div>
+                <div>EXAM-DEBT-2023</div>
+            </div>
+
+            <p style="color: #888; margin: 20px 0;">
+                <strong>使用規則：</strong> 此欠款需以一次宵夜或一杯奶茶償還。<br>
+                有效期至友誼的小船翻覆為止。
+            </p>
+
+            <button class="close-btn" onclick="closeRedPacket()">
+                含淚確認並關閉
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 打開紅包彈窗
+        function openRedPacket() {
+            document.getElementById('redpacketModal').style.display = 'flex';
+            // 可選：播放一個音效
+            // new Audio('https://assets.mixkit.co/sfx/preview/mixkit-cartoon-trick-woop-1031.mp3').play().catch(e => console.log("音效播放失敗"));
+        }
+
+        // 關閉紅包彈窗
+        function closeRedPacket() {
+            document.getElementById('redpacketModal').style.display = 'none';
+            // 關閉後可以顯示一個提示
+            setTimeout(() => {
+                alert('🎉 交易完成！記得你的欠款是：一頓宵夜！');
+            }, 300);
+        }
+
+        // 點擊彈窗背景也可關閉
+        document.getElementById('redpacketModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeRedPacket();
+            }
+        });
+
+        // 頁面載入時的趣味提示
+        window.addEventListener('load', () => {
+            console.log('🧠 考試大考驗紅包頁面已載入！準備好面對你的「獎勵」了嗎？');
+        });
+    </script>
+</body>
+</html>
